@@ -1,3 +1,4 @@
 {
-    "browser": ["Whale", "Chrome"]
+    "browser": ["Whale", "Chrome"],
+    "site url": ["acmicpc.net"]
 }
