@@ -5,63 +5,65 @@ import pyautogui
 import clipboard
 import time
 
-with open('setting.json') as f:                                                                     #세팅파일 불러오기
-    setting_data = json.load(f)
+def main():
 
-parser = argparse.ArgumentParser()
-parser.add_argument("-n", "--new", help="make new file.", action="store_true")
-parser.add_argument("-s", "--submit", help="submit my file.", action="store_true")
-parser.add_argument("-g", "--git", help="add and commit, push my file.", action="store_true")
-args = parser.parse_args()
+    with open('baekflow\setting\setting.json') as f:                                                                     #세팅파일 불러오기
+        setting_data = json.load(f)
 
-if args.new:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-n", "--new", help="make new file.", action="store_true")
+    parser.add_argument("-s", "--submit", help="submit my file.", action="store_true")
+    parser.add_argument("-g", "--git", help="add and commit, push my file.", action="store_true")
+    args = parser.parse_args()
 
-    active_window = pygetwindow.getAllTitles()                                                      #현재 열려있는 창 불러오기
+    if args.new:
 
-    browser_title = []
+        active_window = pygetwindow.getAllTitles()                                                      #현재 열려있는 창 불러오기
 
-    for i in setting_data['browser']:                                                               #브라우저 창 분류
-        for j in active_window:
-            if j[len(j)-len(i):] == i:
-                browser_title.append(j)
+        browser_title = []
 
-    print(browser_title)
+        for i in setting_data['browser']:                                                               #브라우저 창 분류
+            for j in active_window:
+                if j[len(j)-len(i):] == i:
+                    browser_title.append(j)
 
-    browser_window = pygetwindow.getWindowsWithTitle(browser_title[0])[0]
-    browser_window.activate()                                                                       #브라우저 창 포커스
+        print(browser_title)
 
-    time.sleep(0.1)
+        browser_window = pygetwindow.getWindowsWithTitle(browser_title[0])[0]
+        browser_window.activate()                                                                       #브라우저 창 포커스
 
-    pyautogui.hotkey('ctrl', 'l')
-    pyautogui.hotkey('ctrl', 'c')                                                                   #url 복사
+        time.sleep(0.1)
 
-    browser_url = clipboard.paste()
+        pyautogui.hotkey('ctrl', 'l')
+        pyautogui.hotkey('ctrl', 'c')                                                                   #url 복사
 
-    site_url = []
-    
-    for i in range(len(setting_data['site url'])):                                                  #특정 사이트 url 분류
-        temp_url = setting_data['site url'][i]
-        if temp_url in browser_url:
-            site_url.append(browser_url)
+        browser_url = clipboard.paste()
 
-    number = ""
-    for i in site_url[0][::-1]:                                                                     #문제 번호 추출
-        if i != '/':
-            number += i
-        else:
-            break
-    number = number[::-1]
+        site_url = []
+        
+        for i in range(len(setting_data['site url'])):                                                  #특정 사이트 url 분류
+            temp_url = setting_data['site url'][i]
+            if temp_url in browser_url:
+                site_url.append(browser_url)
 
-    file_name = ""
+        number = ""
+        for i in site_url[0][::-1]:                                                                     #문제 번호 추출
+            if i != '/':
+                number += i
+            else:
+                break
+        number = number[::-1]
 
-    for i in setting_data['file name']:
-        if i == 'number':
-            file_name += number
+        file_name = ""
 
-    print(setting_data['path']+file_name+setting_data['programing language'])                       #파일 만들기
-    f = open(setting_data['path']+file_name+setting_data['programing language'], 'w')
+        for i in setting_data['file name']:
+            if i == 'number':
+                file_name += number
 
-if args.submit:
-    print("개발중입니다.")
-if args.git:
-    print("개발중입니다.")
+        print(setting_data['path']+file_name+setting_data['programing language'])                       #파일 만들기
+        f = open(setting_data['path']+file_name+setting_data['programing language'], 'w')
+
+    if args.submit:
+        print("개발중입니다.")
+    if args.git:
+        print("개발중입니다.")
