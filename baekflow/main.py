@@ -46,22 +46,26 @@ def main():
             if temp_url in browser_url:
                 site_url.append(browser_url)
 
-        number = ""
-        for i in site_url[0][::-1]:                                                                     #문제 번호 추출
-            if i != '/':
-                number += i
-            else:
-                break
-        number = number[::-1]
+        if len(site_url) != 0:
+            for i in site_url:
+                number = ""
+                for i in i[::-1]:                                                                           #문제 번호 추출
+                    if i != '/':
+                        number += i
+                    else:
+                        break
+                number = number[::-1]
 
-        file_name = ""
+            file_name = ""
 
-        for i in setting_data['file name']:
-            if i == 'number':
-                file_name += number
+            for i in setting_data['file name']:
+                if i == 'number':
+                    file_name += number
 
-        print(setting_data['path']+file_name+setting_data['programing language'])                       #파일 만들기
-        f = open(setting_data['path']+file_name+setting_data['programing language'], 'w')
+            print(setting_data['path']+file_name+setting_data['programing language'])                       #파일 만들기
+            f = open(setting_data['path']+file_name+setting_data['programing language'], 'w')
+        else:
+            print("Error: Not the specified page.")
 
     if args.submit:
         print("개발중입니다.")
