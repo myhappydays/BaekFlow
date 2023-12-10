@@ -4,6 +4,7 @@ import json
 import pyautogui
 import clipboard
 import time
+import os
 
 def main():
 
@@ -62,8 +63,15 @@ def main():
                 if i == 'number':
                     file_name += number
 
-            print(setting_data['path']+file_name+setting_data['programing language'])                       #파일 만들기
-            f = open(setting_data['path']+file_name+setting_data['programing language'], 'w')
+            file_path = setting_data['path']+file_name+setting_data['programing language']
+            ide_cmd = setting_data['ide']
+
+            print(file_path)                       #파일 만들기
+            f = open(file_path, 'w')
+
+            open_ide = os.system(f'{ide_cmd} {file_path}').read()
+            print(open_ide)
+            
         else:
             print("Error: Not the specified page.")
 
