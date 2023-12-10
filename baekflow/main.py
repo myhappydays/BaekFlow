@@ -6,10 +6,10 @@ import clipboard
 import time
 import os
 
-def main():
-
-    with open('baekflow\setting\setting.json') as f:                                                                     #세팅파일 불러오기
+with open('baekflow\setting\setting.json') as f:                                                                     #세팅파일 불러오기
         setting_data = json.load(f)
+
+def main():
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-n", "--new", help="make new file.", action="store_true")
@@ -28,52 +28,57 @@ def main():
                 if j[len(j)-len(i):] == i:
                     browser_title.append(j)
 
-        print(browser_title)
+        if len(browser_title) != 0:
+            print(browser_title)
 
-        browser_window = pygetwindow.getWindowsWithTitle(browser_title[0])[0]
-        browser_window.activate()                                                                       #브라우저 창 포커스
+            browser_window = pygetwindow.getWindowsWithTitle(browser_title[0])[0]
+            browser_window.activate()                                                                       #브라우저 창 포커스
 
-        time.sleep(0.1)
+            time.sleep(0.5)
 
-        pyautogui.hotkey('ctrl', 'l')
-        pyautogui.hotkey('ctrl', 'c')                                                                   #url 복사
+            pyautogui.hotkey('ctrl', 'l')
+            pyautogui.hotkey('ctrl', 'c')                                                                   #url 복사
 
-        browser_url = clipboard.paste()
+            browser_url = clipboard.paste()
 
-        site_url = []
-        
-        for i in range(len(setting_data['site url'])):                                                  #특정 사이트 url 분류
-            temp_url = setting_data['site url'][i]
-            if temp_url in browser_url:
-                site_url.append(browser_url)
-
-        if len(site_url) != 0:
-            for i in site_url:
-                number = ""
-                for i in i[::-1]:                                                                           #문제 번호 추출
-                    if i != '/':
-                        number += i
-                    else:
-                        break
-                number = number[::-1]
-
-            file_name = ""
-
-            for i in setting_data['file name']:
-                if i == 'number':
-                    file_name += number
-
-            file_path = setting_data['path']+file_name+setting_data['programing language']
-            ide_cmd = setting_data['ide']
-
-            print(file_path)                       #파일 만들기
-            f = open(file_path, 'w')
-
-            open_ide = os.system(f'{ide_cmd} {file_path}').read()
-            print(open_ide)
+            site_url = []
             
+            for i in range(len(setting_data['site url'])):                                                  #특정 사이트 url 분류
+                temp_url = setting_data['site url'][i]
+                if temp_url in browser_url:
+                    site_url.append(browser_url)
+
+            if len(site_url) != 0:
+                for i in site_url:
+                    number = ""
+                    for i in i[::-1]:                                                                           #문제 번호 추출
+                        if i != '/':
+                            number += i
+                        else:
+                            break
+                    number = number[::-1]
+
+                file_name = ""
+
+                for i in setting_data['file name']:
+                    if i == 'number':
+                        file_name += number
+
+                file_path = setting_data['path']+file_name+setting_data['programing language']
+                ide_cmd = setting_data['ide']
+
+                print(file_path)                                                                                #파일 만들기
+                f = open(file_path, 'w')
+                f.close()
+
+                open_ide = os.popen(f'{ide_cmd} {file_path}').read()                                           #open ide
+                print(open_ide)
+            
+            else:
+                print("Error: Not the specified page.")
+
         else:
-            print("Error: Not the specified page.")
+            print("Error: Browser is not open.")
 
     if args.submit:
         print("개발중입니다.")
