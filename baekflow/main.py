@@ -74,7 +74,8 @@ def main():
                             break
                     number = number[::-1]
 
-                    name = ""   #제작 예정
+                    for j in range(len(site_title)):
+                        name = site_title[i].split("번: ")[1].split(" - Whale")[0]
 
                     file_name = ""
 
