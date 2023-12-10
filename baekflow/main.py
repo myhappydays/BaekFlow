@@ -22,6 +22,7 @@ def get_browser_title(setting_data):
             if j.endswith(i):
                 browser_title.append(j)
 
+    print(f'browser title: {browser_title}')
     return browser_title
 
 def get_browser_url(browser_title, setting_data):
@@ -44,6 +45,8 @@ def get_browser_url(browser_title, setting_data):
                 site_url.append(browser_url)
                 site_title.append(title)
 
+    print(f'site url: {site_url}')
+    print(f'site title: {site_title}')
     return site_url, site_title
 
 def create_file_name(number, name, setting_data):
@@ -57,6 +60,7 @@ def create_file_name(number, name, setting_data):
         else:
             file_name += j
 
+    print(f'file name: {file_name}')
     return file_name
 
 def create_file(site_url, site_title, setting_data):
@@ -79,8 +83,7 @@ def create_file(site_url, site_title, setting_data):
         with open(file_path, 'w'):
             pass
 
-        open_ide = os.popen(f'{ide_cmd} {file_path}').read()
-        print(open_ide)
+        os.system(f'{ide_cmd} {file_path}')
 
 def submit_code(site_url, site_title, setting_data):
     # 코드를 제출하는 함수
@@ -117,9 +120,9 @@ def main():
     args = parser.parse_args()
 
     setting_data = load_settings()
-    browser_title = get_browser_title(setting_data)
 
     if args.new:
+        browser_title = get_browser_title(setting_data)
         if browser_title:
             site_url, site_title = get_browser_url(browser_title, setting_data)
             if site_url:
@@ -130,10 +133,15 @@ def main():
             print("Error: Browser is not open.")
 
     if args.submit:
+        browser_title = get_browser_title(setting_data)
         if browser_title:
             site_url, site_title = get_browser_url(browser_title, setting_data)
             if site_url:
                 submit_code(site_url, site_title, setting_data)
+            else:
+                print("Error: Not the specified page.")
+        else:
+            print("Error: Browser is not open.")
 
     if args.git:
         print("개발 중입니다.")
