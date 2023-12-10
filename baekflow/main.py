@@ -5,6 +5,7 @@ import pyautogui
 import clipboard
 import time
 import os
+import webbrowser
 
 with open('baekflow\setting\setting.json') as f:                                                                     #세팅파일 불러오기
         setting_data = json.load(f)
@@ -92,6 +93,50 @@ def main():
             print("Error: Browser is not open.")
 
     if args.submit:
-        print("개발중입니다.")
+        get_browser_title()
+
+        if len(browser_title) != 0:
+
+            get_browser_url()
+
+            if len(site_url) != 0:
+
+                for i in site_url:
+                    print("site_url", i)
+                    number = ""
+                    for i in i[::-1]:                                                                           #문제 번호 추출
+                        if i != '/':
+                            number += i
+                        else:
+                            break
+                    number = number[::-1]
+
+                    file_name = ""
+
+                    for i in setting_data['file name']:
+                        if i == 'number':
+                            file_name += number
+
+                    file_path = setting_data['path']+file_name+setting_data['programing language']
+                    f = open(file_path, 'r')
+
+                    code = ""
+
+                    while True:
+                        c = f.read()
+                        if c == '':
+                            break
+                        code += c
+
+                    clipboard.copy(code)
+
+                    print(setting_data['submit url'] + number)
+                    webbrowser.open(setting_data['submit url'] + number)
+
+                    time.sleep(2)
+
+                    pyautogui.hotkey('ctrl', 'v')
+                    pyautogui.hotkey('ctrl', 'enter')
+
     if args.git:
         print("개발중입니다.")

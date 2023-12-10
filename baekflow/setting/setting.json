@@ -1,6 +1,7 @@
 {
     "browser": ["Whale", "Chrome"],
     "site url": ["acmicpc.net"],
+    "submit url": "acmicpc.net/submit/",
     "path": "E:/Algorithm-study/BEAKJOON/",
     "file name": ["number"],
     "programing language": ".py",
