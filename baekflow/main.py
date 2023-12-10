@@ -9,6 +9,39 @@ import os
 with open('baekflow\setting\setting.json') as f:                                                                     #세팅파일 불러오기
         setting_data = json.load(f)
 
+browser_title = []
+site_url = []
+
+def get_browser_title():
+    active_window = pygetwindow.getAllTitles()                                                      #현재 열려있는 창 불러오기
+
+    for i in setting_data['browser']:                                                               #브라우저 창 분류
+        for j in active_window:
+            if j[len(j)-len(i):] == i:
+                browser_title.append(j)
+    
+    print(browser_title)
+
+def get_browser_url():
+    for i in range(len(browser_title)):
+        browser_window = pygetwindow.getWindowsWithTitle(browser_title[i])[0]
+        print(pygetwindow.getWindowsWithTitle(browser_title[i])[0])
+        browser_window.activate()                                                                       #브라우저 창 포커스
+
+        time.sleep(0.5)
+
+        pyautogui.hotkey('ctrl', 'l')
+        pyautogui.hotkey('ctrl', 'c')                                                                   #url 복사
+
+        browser_url = clipboard.paste()
+
+        print("browser_url", browser_url)
+                
+        for i in range(len(setting_data['site url'])):                                                  #특정 사이트 url 분류
+            temp_url = setting_data['site url'][i]
+            if temp_url in browser_url:
+                site_url.append(browser_url)
+
 def main():
 
     parser = argparse.ArgumentParser()
@@ -18,38 +51,16 @@ def main():
     args = parser.parse_args()
 
     if args.new:
-
-        active_window = pygetwindow.getAllTitles()                                                      #현재 열려있는 창 불러오기
-
-        browser_title = []
-
-        for i in setting_data['browser']:                                                               #브라우저 창 분류
-            for j in active_window:
-                if j[len(j)-len(i):] == i:
-                    browser_title.append(j)
+        
+        get_browser_title()
 
         if len(browser_title) != 0:
-            print(browser_title)
 
-            browser_window = pygetwindow.getWindowsWithTitle(browser_title[0])[0]
-            browser_window.activate()                                                                       #브라우저 창 포커스
-
-            time.sleep(0.5)
-
-            pyautogui.hotkey('ctrl', 'l')
-            pyautogui.hotkey('ctrl', 'c')                                                                   #url 복사
-
-            browser_url = clipboard.paste()
-
-            site_url = []
-            
-            for i in range(len(setting_data['site url'])):                                                  #특정 사이트 url 분류
-                temp_url = setting_data['site url'][i]
-                if temp_url in browser_url:
-                    site_url.append(browser_url)
+            get_browser_url()
 
             if len(site_url) != 0:
                 for i in site_url:
+                    print("site_url", i)
                     number = ""
                     for i in i[::-1]:                                                                           #문제 번호 추출
                         if i != '/':
@@ -58,21 +69,21 @@ def main():
                             break
                     number = number[::-1]
 
-                file_name = ""
+                    file_name = ""
 
-                for i in setting_data['file name']:
-                    if i == 'number':
-                        file_name += number
+                    for i in setting_data['file name']:
+                        if i == 'number':
+                            file_name += number
 
-                file_path = setting_data['path']+file_name+setting_data['programing language']
-                ide_cmd = setting_data['ide']
+                    file_path = setting_data['path']+file_name+setting_data['programing language']
+                    ide_cmd = setting_data['ide']
 
-                print(file_path)                                                                                #파일 만들기
-                f = open(file_path, 'w')
-                f.close()
+                    print(file_path)                                                                                #파일 만들기
+                    f = open(file_path, 'w')
+                    f.close()
 
-                open_ide = os.popen(f'{ide_cmd} {file_path}').read()                                           #open ide
-                print(open_ide)
+                    open_ide = os.popen(f'{ide_cmd} {file_path}').read()                                           #open ide
+                    print(open_ide)
             
             else:
                 print("Error: Not the specified page.")
