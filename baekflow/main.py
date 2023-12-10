@@ -8,10 +8,11 @@ import os
 import webbrowser
 
 with open('baekflow\setting\setting.json') as f:                                                                     #세팅파일 불러오기
-        setting_data = json.load(f)
+    setting_data = json.load(f)
 
 browser_title = []
 site_url = []
+site_title = []
 
 def get_browser_title():
     active_window = pygetwindow.getAllTitles()                                                      #현재 열려있는 창 불러오기
@@ -25,8 +26,10 @@ def get_browser_title():
 
 def get_browser_url():
     for i in range(len(browser_title)):
-        browser_window = pygetwindow.getWindowsWithTitle(browser_title[i])[0]
-        print(pygetwindow.getWindowsWithTitle(browser_title[i])[0])
+        temp_title = browser_title[i]
+        temp_windows = pygetwindow.getWindowsWithTitle(browser_title[i])[0]
+        browser_window = temp_windows
+        print(temp_title)
         browser_window.activate()                                                                       #브라우저 창 포커스
 
         time.sleep(0.5)
@@ -42,6 +45,7 @@ def get_browser_url():
             temp_url = setting_data['site url'][i]
             if temp_url in browser_url:
                 site_url.append(browser_url)
+                site_title.append(temp_title)
 
 def main():
 
@@ -60,21 +64,27 @@ def main():
             get_browser_url()
 
             if len(site_url) != 0:
-                for i in site_url:
-                    print("site_url", i)
+                for i in range(len(site_url)):
+                    print("site_url", site_url[i])
                     number = ""
-                    for i in i[::-1]:                                                                           #문제 번호 추출
-                        if i != '/':
-                            number += i
+                    for j in site_url[i][::-1]:                                                                           #문제 번호 추출
+                        if j != '/':
+                            number += j
                         else:
                             break
                     number = number[::-1]
 
+                    name = ""   #제작 예정
+
                     file_name = ""
 
-                    for i in setting_data['file name']:
-                        if i == 'number':
+                    for j in setting_data['file name']:
+                        if j == 'number':
                             file_name += number
+                        elif j == 'name':
+                            file_name += name
+                        else:
+                            file_name += j
 
                     file_path = setting_data['path']+file_name+setting_data['programing language']
                     ide_cmd = setting_data['ide']
