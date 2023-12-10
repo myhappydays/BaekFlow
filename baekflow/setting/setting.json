@@ -3,7 +3,7 @@
     "site url": ["acmicpc.net"],
     "submit url": "acmicpc.net/submit/",
     "path": "E:/Algorithm-study/BEAKJOON/",
-    "file name": ["number","번 ","name"],
+    "file name": ["number","-","name"],
     "programing language": ".py",
     "ide": "code"
 }
