@@ -2,8 +2,9 @@
     "browser": ["Whale", "Chrome"],
     "site url": ["acmicpc.net"],
     "submit url": "acmicpc.net/submit/",
-    "path": "E:/Algorithm-study/BEAKJOON/",
+    "path": "E:/BaekFlow/Algorithm_code/",
     "file name": ["number","-","name"],
     "programing language": ".py",
-    "ide": "code"
+    "ide": "code",
+    "git automation": ["add", "commit"]
 }

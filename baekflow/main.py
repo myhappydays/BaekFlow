@@ -49,7 +49,7 @@ def get_browser_url(browser_title, setting_data):
     print(f'site title: {site_title}')
     return site_url, site_title
 
-def create_file_name(number, name, setting_data):
+def create_name(number, name, setting_data):
     file_name = ""
 
     for j in setting_data['file name']:
@@ -63,20 +63,32 @@ def create_file_name(number, name, setting_data):
     print(f'file name: {file_name}')
     return file_name
 
+def get_question_information(url, title):
+    # 문제 번호 추출
+    number = url.split('/')[-1][::-1]
+    number = number[::-1]
+
+    # 문제 이름 추출
+    name = title.split("번: ")[1].split(" - Whale")[0]
+
+    return number, name
+
+def create_file_path(url, title, setting_data):
+    # 각 사이트에 대해 파일 경로 생성
+
+    number, name = get_question_information(url, title)
+
+    # 설정된 파일 이름 생성
+    file_name = create_name(number, name, setting_data)
+
+    file_path = setting_data['path'] + file_name + setting_data['programing language']
+    
+    return file_path
+
 def create_file(site_url, site_title, setting_data):
     # 각 사이트에 대해 파일을 생성
     for i, url in enumerate(site_url):
-        # 문제 번호 추출
-        number = url.split('/')[-1][::-1]
-        number = number[::-1]
-
-        # 문제 이름 추출
-        name = site_title[i].split("번: ")[1].split(" - Whale")[0]
-
-        # 설정된 파일 이름 생성
-        file_name = create_file_name(number, name, setting_data)
-
-        file_path = setting_data['path'] + file_name + setting_data['programing language']
+        file_path = create_file_path(url, site_title[i], setting_data)
         ide_cmd = setting_data['ide']
 
         print(file_path)
@@ -88,15 +100,10 @@ def create_file(site_url, site_title, setting_data):
 def submit_code(site_url, site_title, setting_data):
     # 코드를 제출하는 함수
     for i, url in enumerate(site_url):
-        # 문제 번호 추출
-        number = url.split('/')[-1][::-1]
-        number = number[::-1]
-
-        # 문제 이름 추출
-        name = site_title[i].split("번: ")[1].split(" - Whale")[0]
+        number, name = get_question_information(url, site_title[i])
 
         # 설정된 파일 이름 생성 
-        file_name = create_file_name(number, name, setting_data)
+        file_name = create_name(number, name, setting_data)
 
         file_path = setting_data['path'] + file_name + setting_data['programing language']
         with open(file_path, 'r') as f:
@@ -111,6 +118,33 @@ def submit_code(site_url, site_title, setting_data):
 
         pyautogui.hotkey('ctrl', 'v')
         pyautogui.hotkey('ctrl', 'enter')
+
+def git_code(site_url, site_title, setting_data):
+    # 깃허브 자동화 코드
+    for i, url in enumerate(site_url):
+
+        number, name = get_question_information(url, site_title[i])
+
+        for j in setting_data['git automation']:
+            if j == 'add':
+                # git add
+                git_path = create_file_path(url, site_title[i], setting_data)
+                cmd = os.popen(f'git add {git_path}').read()
+                print(cmd)
+
+            elif j == 'commit':
+                # git commit
+                git_message = create_name(number, name, setting_data)
+                cmd = os.popen(f'git commit -m {git_message}').read()
+                print(cmd)
+
+            elif j == 'push':
+                # git push
+                cmd = os.popen('git push').read()
+                print(cmd)
+
+            else:
+                print(f"Error: {j} is not git command")
 
 def main():
     parser = argparse.ArgumentParser()
@@ -144,4 +178,12 @@ def main():
             print("Error: Browser is not open.")
 
     if args.git:
-        print("개발 중입니다.")
+        browser_title = get_browser_title(setting_data)
+        if browser_title:
+            site_url, site_title = get_browser_url(browser_title, setting_data)
+            if site_url:
+                git_code(site_url, site_title, setting_data)
+            else:
+                print("Error: Not the specified page.")
+        else:
+            print("Error: Browser is not open.")
