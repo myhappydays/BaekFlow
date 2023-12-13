@@ -129,13 +129,13 @@ def git_code(site_url, site_title, setting_data):
             if j == 'add':
                 # git add
                 git_path = create_file_path(url, site_title[i], setting_data)
-                cmd = os.popen(f'git add {git_path}').read()
+                cmd = os.popen(f'git add .').read()
                 print(cmd)
 
             elif j == 'commit':
                 # git commit
                 git_message = create_name(number, name, setting_data)
-                cmd = os.popen(f'git commit -m {git_message}').read()
+                cmd = os.popen(f'git commit -m "{git_message}"').read()
                 print(cmd)
 
             elif j == 'push':
